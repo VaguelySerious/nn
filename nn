@@ -1,0 +1,74 @@
+#!/usr/bin/node
+
+const args = process.argv.slice(2);
+
+if (process.stdin.isTTY) {
+  //
+} else {
+  process.error("No input on STDIN deteted.");
+  process.exit(1);
+}
+
+// TODO Prettier error output
+if (args.length < 1 || args.length > 2) {
+  process.error(`Usage:
+    cat file.json | nn \"a.map(x => x.prop)\""
+    cat -r file.json | nn \"a.map(x => x.prop)\""
+`);
+  process.exit(1);
+}
+
+let code;
+if (args.length === 1) {
+  code = args[0];
+} else if (args.length === 2 && args[0] === "-r") {
+  process.error("Disabled autoformatting");
+  code = args[1];
+} else {
+  process.error("Invalid parameters");
+  process.exit(1);
+}
+
+const fs = require("fs");
+const stdin = fs.readFileSync(0);
+let data = stdin;
+const split = data.split("\\n");
+const nonEmptyLines = split.filter((line) => Boolean(line.trim()));
+function commaCount(line) {
+  return (line.match(/,/g) || []).length;
+}
+if (nonEmptyLines.length > 0) {
+  const commasInFirstLine = commaCount(nonEmptyLines[0]);
+  if (
+    commasInFirstLine > 0 &&
+    nonEmptyLines.every((line) => commaCount(line) == commasInFirstLine)
+  ) {
+    // TODO Improve CSV parsing
+    data = split.map((line) => line.split(","));
+    console.error("Parsed as CSV");
+  } else {
+    try {
+      data = JSON.parse(data);
+      console.error("Parsed as JSON");
+    } catch (e) {}
+  }
+}
+$transform;
+
+const nn_result = eval(code);
+
+if (!["string", "number"].includes(typeof nn_result)) {
+  let mightBeCSV = false;
+  if (Array.isArray(nn_result)) {
+  }
+
+  if (mightBeCSV) {
+    nn_result = nn_result.map((line) => line.join(",")).join("\\n");
+    console.error("Serializing as JSON");
+  } else {
+    nn_result = JSON.stringify(nn_result);
+    console.error("Serializing as JSON");
+  }
+}
+
+process.stdout.write(nn_result);
