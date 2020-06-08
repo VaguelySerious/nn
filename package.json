@@ -1,6 +1,6 @@
 {
   "name": "node-cli-processing",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "CLI helper for processing data on the command line using JS syntax",
   "main": "nn",
   "scripts": {
