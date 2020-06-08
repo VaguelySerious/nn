@@ -1,0 +1,32 @@
+{
+  "name": "node-cli-processing",
+  "version": "1.0.0",
+  "description": "CLI helper for processing data on the command line using JS syntax",
+  "main": "nn",
+  "scripts": {
+    "test": "echo \"no tests\""
+  },
+  "bin": {
+	"nn": "./nn"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VaguelySerious/nn.git"
+  },
+  "keywords": [
+    "cli",
+    "data",
+    "processing",
+    "data",
+    "processing",
+    "js",
+    "command",
+    "line"
+  ],
+  "author": "Peter Wielander",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VaguelySerious/nn/issues"
+  },
+  "homepage": "https://github.com/VaguelySerious/nn#readme"
+}
