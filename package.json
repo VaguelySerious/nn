@@ -7,7 +7,7 @@
     "test": "echo \"no tests\""
   },
   "bin": {
-	"nn": "./nn"
+    "nn": "./nn"
   },
   "repository": {
     "type": "git",
