@@ -3,6 +3,7 @@
 const fs = require("fs");
 let args = process.argv.slice(2);
 
+// Helper functions
 function error(str) {
   console.error("\x1b[31m" + str + "\x1b[0m");
 }
@@ -10,29 +11,7 @@ function notice(str) {
   console.error("\x1b[33m" + str + "\x1b[0m");
 }
 
-// Getting STDIN or file input
-let data = String(fs.readFileSync(0));
-if (data.trim().length === 0) {
-  error(
-    "No input on STDIN deteted, trying to parse first argument as filename."
-  );
-
-  if (args.length < 2 || !fs.existsSync(args[0])) {
-    error("No valid path provided as argument, exiting.");
-    process.exit(1);
-  }
-
-  try {
-    data = fs.readFileSync(args[0]);
-    args = args.slice(1);
-  } catch (e) {
-    error(e);
-    error(`Failed reading file ${args[0]}, exiting.`);
-    process.exit(1);
-  }
-}
-
-// Processing flags
+// Process flags
 let rawFlag = false;
 const rawFlagPos = args.indexOf("--raw");
 if (rawFlagPos >= 0) {
@@ -41,8 +20,29 @@ if (rawFlagPos >= 0) {
   notice("Disabled auto formatting.");
 }
 
+// Get STDIN or file input
+let data;
+if (args.length > 1 && fs.existsSync(args[0])) {
+  notice("Reading from file " + args[0]);
+  try {
+    data = fs.readFileSync(args[0], { encoding: "utf8" });
+    args = args.slice(1);
+  } catch (e) {
+    console.error(e);
+    error(`Could not read file "${args[0]}", exiting.`);
+    process.exit(1);
+  }
+} else {
+  notice("No file provided, reading from STDIN.");
+  data = String(fs.readFileSync(0));
+  if (data.trim().length === 0) {
+    error("Recevied no data from STDIN, exiting.");
+    process.exit(1);
+  }
+}
+
 // TODO Prettier error output
-// Processing user code
+// Process user code
 if (args.length < 1) {
   error(`Missing code argument.`);
   console.error(
