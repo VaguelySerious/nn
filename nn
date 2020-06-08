@@ -1,38 +1,62 @@
 #!/usr/bin/node
 
-const args = process.argv.slice(2);
+const fs = require("fs");
+let args = process.argv.slice(2);
 
-if (process.stdin.isTTY) {
-  //
-} else {
-  process.error("No input on STDIN deteted.");
-  process.exit(1);
+function error(str) {
+  console.error("\x1b[31m" + str + "\x1b[0m");
+}
+function notice(str) {
+  console.error("\x1b[33m" + str + "\x1b[0m");
+}
+
+// Getting STDIN or file input
+let data = String(fs.readFileSync(0));
+if (data.trim().length === 0) {
+  error(
+    "No input on STDIN deteted, trying to parse first argument as filename."
+  );
+
+  if (args.length < 2 || !fs.existsSync(args[0])) {
+    error("No valid path provided as argument, exiting.");
+    process.exit(1);
+  }
+
+  try {
+    data = fs.readFileSync(args[0]);
+    args = args.slice(1);
+  } catch (e) {
+    error(e);
+    error(`Failed reading file ${args[0]}, exiting.`);
+    process.exit(1);
+  }
+}
+
+// Processing flags
+let rawFlag = false;
+const rawFlagPos = args.indexOf("--raw");
+if (rawFlagPos >= 0) {
+  rawFlag = true;
+  args.splice(rawFlagPos, 1);
+  notice("Disabled auto formatting.");
 }
 
 // TODO Prettier error output
-if (args.length < 1 || args.length > 2) {
-  process.error(`Usage:
+// Processing user code
+if (args.length < 1) {
+  error(`Missing code argument.`);
+  console.error(
+    `Usage:
     cat file.json | nn \"a.map(x => x.prop)\""
-    cat -r file.json | nn \"a.map(x => x.prop)\""
-`);
+    cat --raw file.json | nn \"a.map(x => x.prop)\""
+`
+  );
   process.exit(1);
 }
+const code = args[0];
 
-let code;
-if (args.length === 1) {
-  code = args[0];
-} else if (args.length === 2 && args[0] === "-r") {
-  process.error("Disabled autoformatting");
-  code = args[1];
-} else {
-  process.error("Invalid parameters");
-  process.exit(1);
-}
-
-const fs = require("fs");
-const stdin = fs.readFileSync(0);
-let data = stdin;
-const split = data.split("\\n");
+// Formatting input data
+const split = data.split("\n");
 const nonEmptyLines = split.filter((line) => Boolean(line.trim()));
 function commaCount(line) {
   return (line.match(/,/g) || []).length;
@@ -45,30 +69,38 @@ if (nonEmptyLines.length > 0) {
   ) {
     // TODO Improve CSV parsing
     data = split.map((line) => line.split(","));
-    console.error("Parsed as CSV");
+    notice("Parsed as CSV");
   } else {
     try {
       data = JSON.parse(data);
-      console.error("Parsed as JSON");
-    } catch (e) {}
+      notice("Parsed as JSON");
+    } catch (e) {
+      notice("Parsed as plain text");
+    }
   }
 }
-$transform;
 
-const nn_result = eval(code);
+// Eval user code
+eval(code);
 
-if (!["string", "number"].includes(typeof nn_result)) {
-  let mightBeCSV = false;
-  if (Array.isArray(nn_result)) {
-  }
+// Format output of user code
+if (!["string", "number"].includes(typeof data)) {
+  let mightBeCSV =
+    Array.isArray(data) &&
+    data.length &&
+    data.every(Array.isArray) &&
+    data.every((arr) => arr.length === data[0].length);
 
   if (mightBeCSV) {
-    nn_result = nn_result.map((line) => line.join(",")).join("\\n");
-    console.error("Serializing as JSON");
+    data = data.map((line) => line.join(",")).join("\n");
+    notice("Serializing as CSV");
   } else {
-    nn_result = JSON.stringify(nn_result);
-    console.error("Serializing as JSON");
+    data = JSON.stringify(data);
+    notice("Serializing as JSON");
   }
+} else {
+  notice("Serializing as plain text");
 }
 
-process.stdout.write(nn_result);
+// Write to STDOUT
+process.stdout.write(data);
