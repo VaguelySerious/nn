@@ -62,19 +62,19 @@ function commaCount(line) {
   return (line.match(/,/g) || []).length;
 }
 if (nonEmptyLines.length > 0) {
-  const commasInFirstLine = commaCount(nonEmptyLines[0]);
-  if (
-    commasInFirstLine > 0 &&
-    nonEmptyLines.every((line) => commaCount(line) == commasInFirstLine)
-  ) {
-    // TODO Improve CSV parsing
-    data = split.map((line) => line.split(","));
-    notice("Parsed as CSV");
-  } else {
-    try {
-      data = JSON.parse(data);
-      notice("Parsed as JSON");
-    } catch (e) {
+  try {
+    data = JSON.parse(data);
+    notice("Parsed as JSON");
+  } catch (e) {
+    const commasInFirstLine = commaCount(nonEmptyLines[0]);
+    if (
+      commasInFirstLine > 0 &&
+      nonEmptyLines.every((line) => commaCount(line) == commasInFirstLine)
+    ) {
+      // TODO Improve CSV parsing
+      data = split.map((line) => line.split(","));
+      notice("Parsed as CSV");
+    } else {
       notice("Parsed as plain text");
     }
   }
