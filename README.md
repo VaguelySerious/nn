@@ -33,7 +33,10 @@ Use the command either with a file or via shell pipe
 
 The commands accepts the input and a string of JS code that is used to process the data.  
 The file or STDIN content is made available as the `data` variable, after being automatically turned into a JS object or array if the input file is deteced as being a JSON or CSV file respectively.  
-Afterwards executing the code provided, the content of the `data` variable is then piped to STDOUT, after being serialized as JSON or CSV if the type matches.
+Afterwards executing the code provided, the content of the `data` variable is then piped to STDOUT, after being serialized as JSON or CSV if the type matches.  
+
+**Flags**:  
+- `--raw` disables automatic parsing and formatting as JSON/CSV. Use this if the wrong type is detected.
 
 ## More examples
 
