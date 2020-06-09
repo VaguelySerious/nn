@@ -5,10 +5,10 @@
 
 ## What is this?
 
-It's a tool designed for being used in the command line to process streams or files.
+It's a tool designed for use in the command line to process streams or files.
 If you're a data scientist or hobbyist and find yourself working with JSON or CSV files a lot, but don't have the time or will to learn how to use `jq`, `awk`, `cut`, `tr`, `grep`, or `csvtool`, this is what you need!
 
-**Note**: JSON support is currently much more developed than CSV, though both formats are usable.
+**Note**: JSON support is currently much more developed than CSV, though both formats are usable.  
 **Note 2**: Since this is driven by NodeJS and not buffered by line (due to JSON / CSV parsing), **avoid** processing files larger than a Gigabyte or so if you value your memory and CPU cycles.
 
 **Features**:
@@ -29,7 +29,7 @@ This will make the `nn` command available globally.
 Use the command either with a file or via shell pipe
 
 - `nn ./fruits.json "data = data.filter(fruit => fruit.type === 'citrus')"`
-- `cat ./fruits.json | "data = data.filter(fruit => fruit.type === 'citrus')"`
+- `cat ./fruits.json | nn "data = data.filter(fruit => fruit.type === 'citrus')"`
 
 The commands accepts the input and a string of JS code that is used to process the data.  
 The file or STDIN content is made available as the `data` variable, after being automatically turned into a JS object or array if the input file is deteced as being a JSON or CSV file respectively.  
