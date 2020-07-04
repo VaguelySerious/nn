@@ -70,7 +70,7 @@ Here are some possible use-cases:
 - **Filtering by json attribute**: `nn ./fruits.json "data = data.map(fruit => fruit.weight > 2000)"`
 - **Filtering by csv column**: `nn ./fruits.csv "data = data.map(fruit => +fruit[1] > 2000)"`
 - **Sorting by json attribute**: `nn ./fruits.json "data = data.sort((a,b) => a.weight - b.weight)"`
-- **Sorting by csv column**: `nn ./fruits.csv "data = data.sort((a,b) => +[1] - +b[1])"`
+- **Sorting by csv column**: `nn ./fruits.csv "data = data.sort((a,b) => +a[1] - +b[1])"`
 
 Since this is driven directly by NodeJS, **everything** is technically possible.
 
